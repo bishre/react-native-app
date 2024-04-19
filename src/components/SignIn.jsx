@@ -1,6 +1,8 @@
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
-import Text from './Text';
+import * as yup from 'yup';
 import { useFormik } from 'formik';
+
+import Text from './Text';
 import theme from '../theme';
 
 const styles = StyleSheet.create({
@@ -14,6 +16,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 2
   },
+  error: {
+    borderColor: '#d73a4a'
+  },
   signin: {
     padding: 8,
     backgroundColor: theme.colors.primary,
@@ -26,29 +31,59 @@ const initialValues = {
   password: ''
 }
 
+const TextField = (props) => {
+  const textFieldStyles = [
+    styles.input,
+    props.error && styles.error
+  ];
+  return (
+    <TextInput
+      {...props}
+      style={textFieldStyles}
+    />
+  )
+}
+
 const SignIn = () => {
+  const validationSchema = yup.object().shape({
+    username: yup
+      .string()
+      .required('Username is required'),
+    password: yup
+      .string()
+      .required('Password is required')
+  })
+
   const onSubmit = (values) => {
     console.log(values)
   }
 
   const formik = useFormik({
     initialValues,
+    validationSchema,
     onSubmit
   })
   return (
     <View style={styles.container}>
-      <TextInput
+      <TextField
         placeholder='username'
         value={formik.values.username}
         onChangeText={formik.handleChange('username')}
-        style={styles.input}
+        error={formik.errors.username}
       />
-      <TextInput
+      {formik.touched.username && formik.errors.username && (
+        <Text style={{ color: '#d73a4a' }}>{formik.errors.username}</Text>
+      )}
+      <TextField
         placeholder='password'
         value={formik.values.password}
         onChangeText={formik.handleChange('password')}
-        style={styles.input}
+        error={formik.errors.password}
+        secureTextEntry
       />
+      {formik.touched.password && formik.errors.password && (
+        <Text style={{ color: '#d73a4a' }}>{formik.errors.password}</Text>
+      )}
       <Pressable
         onPress={formik.handleSubmit}
         style={styles.signin}
