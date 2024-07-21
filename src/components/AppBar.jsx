@@ -50,6 +50,9 @@ const AppBar = () => {
             <Text style={styles.text}>Sign-in</Text>
           </Link>
         }
+        <Link to="/review">
+          <Text style={styles.text}>Create Review</Text>
+        </Link>
       </ScrollView>
     </View>
   );

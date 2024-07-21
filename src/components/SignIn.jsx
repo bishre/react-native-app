@@ -32,7 +32,7 @@ const initialValues = {
   password: ''
 }
 
-const TextField = (props) => {
+export const TextField = (props) => {
   const textFieldStyles = [
     styles.input,
     props.error && styles.error
@@ -45,9 +45,7 @@ const TextField = (props) => {
   )
 }
 
-const SignIn = () => {
-  const [signIn] = useSignIn();
-  const navigate = useNavigate();
+export const SignInContainer = ({ onSubmit }) => {
 
   const validationSchema = yup.object().shape({
     username: yup
@@ -58,22 +56,12 @@ const SignIn = () => {
       .required('Password is required')
   })
 
-  const onSubmit = async (values) => {
-    const { username, password } = values
-    try {
-      const { authenticate } = await signIn({ username, password });
-      console.log(authenticate)
-      navigate('/');
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit
   })
+
   return (
     <View style={styles.container}>
       <TextField
@@ -103,6 +91,78 @@ const SignIn = () => {
       </Pressable>
     </View>
   );
+}
+
+const SignIn = () => {
+  const [signIn] = useSignIn();
+  const navigate = useNavigate();
+
+  const onSubmit = async (values) => {
+    const { username, password } = values
+    try {
+      await signIn({ username, password });
+      navigate('/');
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  return <SignInContainer onSubmit={onSubmit}/>
+  // const navigate = useNavigate();
+
+  // const validationSchema = yup.object().shape({
+  //   username: yup
+  //     .string()
+  //     .required('Username is required'),
+  //   password: yup
+  //     .string()
+  //     .required('Password is required')
+  // })
+
+  // const onSubmit = async (values) => {
+  //   const { username, password } = values
+  //   try {
+  //     await signIn({ username, password });
+  //     navigate('/');
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
+
+  // const formik = useFormik({
+  //   initialValues,
+  //   validationSchema,
+  //   onSubmit
+  // })
+  // return (
+  //   <View style={styles.container}>
+  //     <TextField
+  //       placeholder='username'
+  //       value={formik.values.username}
+  //       onChangeText={formik.handleChange('username')}
+  //       error={formik.errors.username}
+  //     />
+  //     {formik.touched.username && formik.errors.username && (
+  //       <Text style={{ color: '#d73a4a' }}>{formik.errors.username}</Text>
+  //     )}
+  //     <TextField
+  //       placeholder='password'
+  //       value={formik.values.password}
+  //       onChangeText={formik.handleChange('password')}
+  //       error={formik.errors.password}
+  //       secureTextEntry
+  //     />
+  //     {formik.touched.password && formik.errors.password && (
+  //       <Text style={{ color: '#d73a4a' }}>{formik.errors.password}</Text>
+  //     )}
+  //     <Pressable
+  //       onPress={formik.handleSubmit}
+  //       style={styles.signin}
+  //     >
+  //       <Text color="white" style={{ textAlign: 'center' }}>Sign-in</Text>
+  //     </Pressable>
+  //   </View>
+  // );
 };
 
 export default SignIn;
