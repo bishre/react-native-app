@@ -11,7 +11,6 @@ const useCreateReview = () => {
     review
   }) => {
     const result = await createReview({ variables: { owner, repository, rating, review }})
-    console.log(result)
   }
 
   return [ addReview, result ]
