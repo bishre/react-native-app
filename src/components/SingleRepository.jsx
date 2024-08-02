@@ -17,19 +17,20 @@ const styles = StyleSheet.create({
     height: 8,
   },
   rating: {
-    width: 24,
-    height: 24,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 30,
+    height: 30,
     marginRight: 6,
-    borderWidth: 1,
-    borderRadius: 12,
+    borderWidth: 2,
+    borderRadius: 15,
     borderColor: theme.colors.primary,
-    textAlign: 'center',
-    verticalAlign: 'middle',
     color: theme.colors.primary
   }
 });
 
-const ItemSeparator = () => <View style={styles.separator} />;
+export const ItemSeparator = () => <View style={styles.separator} />;
 
 const RepositoryInfo = ({ repository }) => {
   return (
@@ -39,7 +40,7 @@ const RepositoryInfo = ({ repository }) => {
   )
 }
 
-const ReviewItem = ({ review }) => {
+export const ReviewItem = ({ review }) => {
   return (
     <View style={styles.review}>
       <View>
@@ -47,7 +48,7 @@ const ReviewItem = ({ review }) => {
       </View>
       <View>
         <Text fontWeight="bold">{review.user.username}</Text>
-        <Text>{format(new Date(review.createdAt), 'dd.mm.yyyy')}</Text>
+        <Text>{format(new Date(review.createdAt), 'dd.MM.yyyy')}</Text>
         <Text>{review.text}</Text>
       </View>
     </View>
@@ -56,16 +57,25 @@ const ReviewItem = ({ review }) => {
 
 const SingleRepository = () => {
   const { id } = useParams();
-  const { repository } = useRepository({ id });
+  const { repository, fetchMore } = useRepository({ 
+    id,
+    first: 3
+  });
 
   const reviewsNodes = repository
   ? repository.reviews.edges.map(edge => edge.node)
   : [];
 
+  const onEndReach = () => {
+    fetchMore()
+  }
+
+
   return (
     <FlatList
       data={reviewsNodes}
       ItemSeparatorComponent={ItemSeparator}
+      onEndReached={onEndReach}
       renderItem={({ item }) => <ReviewItem review={item} />}
       keyExtractor={({ id }) => id}
       ListHeaderComponent={() => <RepositoryInfo repository={repository} />}

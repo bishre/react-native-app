@@ -39,6 +39,16 @@ const AppBar = () => {
         <Link to="/">
           <Text style={styles.text}>Repositories</Text>
         </Link>
+        {data?.me &&  
+        <>
+          <Link to="/review">
+            <Text style={styles.text}>Create Review</Text>
+          </Link>
+          <Link to="/myreviews">
+            <Text style={styles.text}>My Reviews</Text>
+          </Link>
+        </>
+        }
         {data?.me ?
           <Pressable
             onPress={handleSignout}
@@ -46,13 +56,16 @@ const AppBar = () => {
             <Text style={styles.text}>Sign out</Text>
           </Pressable>
           :
-          <Link to="/signin">
-            <Text style={styles.text}>Sign-in</Text>
-          </Link>
+          <>
+            <Link to="/signin">
+              <Text style={styles.text}>Sign-in</Text>
+            </Link>
+            <Link to="/signup">
+              <Text style={styles.text}>Sign-up</Text>
+            </Link>
+          </>
+          
         }
-        <Link to="/review">
-          <Text style={styles.text}>Create Review</Text>
-        </Link>
       </ScrollView>
     </View>
   );

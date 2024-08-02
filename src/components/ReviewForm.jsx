@@ -7,6 +7,7 @@ import { useMutation } from '@apollo/client';
 import Text from './Text';
 import { CREATE_REVIEW } from '../graphql/mutations';
 import { TextField } from './SignIn';
+import theme from '../theme';
 
 const initialValues = {
   ownerName: '',
@@ -22,12 +23,12 @@ const ReviewForm = () => {
   const validationSchema = yup.object().shape({
     ownerName: yup
       .string()
-      .required("username is required"),
+      .required("Repository owner name is required"),
     repositoryName: yup
       .string()
-      .required('repositoryName name is required'),
+      .required('Repository name is required'),
     rating: yup
-      .string()
+      .number()
       .min(0)
       .max(100)
       .required('Rating is required'),
@@ -36,15 +37,12 @@ const ReviewForm = () => {
   })
 
   const onSubmit = async (values) => {
-    console.log('second')
     const { ownerName, repositoryName, rating, text } = values
     const numRating = Number(rating)
-    console.log(typeof numRating)
-    const review = { ownerName, repositoryName, rating, text }
-    console.log(values)
+    const review = { ownerName, repositoryName, rating: numRating, text }
     try {
       await createReview({ variables: { review } })
-      console.log(data)
+      navigate('/');
     } catch (e) {
       console.log(e)
     }
@@ -57,36 +55,36 @@ const ReviewForm = () => {
   })
 
   return (
-    <View>
+    <View style={{ padding: 10 }}>
       <TextField
-        placeholder='ownerName'
+        placeholder='Repository owner name'
         value={formik.values.ownerName}
         onChangeText={formik.handleChange('ownerName')}
         error={formik.errors.ownerName}
       />
       {formik.touched.ownerName && formik.errors.ownerName && (
-        <Text style={{ color: '#d73a4a' }}>{formik.errors.ownerName}</Text>
+        <Text style={{ color: '#d73a4a', marginBottom: 8 }}>{formik.errors.ownerName}</Text>
       )}
       <TextField
-        placeholder='repositoryName'
+        placeholder='Repository name'
         value={formik.values.repositoryName}
         onChangeText={formik.handleChange('repositoryName')}
         error={formik.errors.repositoryName}
       />
       {formik.touched.repositoryName && formik.errors.repositoryName && (
-        <Text style={{ color: '#d73a4a' }}>{formik.errors.repositoryName}</Text>
+        <Text style={{ color: '#d73a4a', marginBottom: 8 }}>{formik.errors.repositoryName}</Text>
       )}
       <TextField
-        placeholder='rating'
+        placeholder='Rating between 0 and 100'
         value={formik.values.rating}
         onChangeText={formik.handleChange('rating')}
         error={formik.errors.rating}
       />
       {formik.touched.rating && formik.errors.rating && (
-        <Text style={{ color: '#d73a4a' }}>{formik.errors.rating}</Text>
+        <Text style={{ color: '#d73a4a', marginBottom: 8 }}>{formik.errors.rating}</Text>
       )}
       <TextField
-        placeholder='text'
+        placeholder='Review'
         value={formik.values.text}
         onChangeText={formik.handleChange('text')}
         error={formik.errors.text}
@@ -95,7 +93,7 @@ const ReviewForm = () => {
       <Pressable
         onPress={formik.handleSubmit}
       >
-        <Text color="white" style={{ textAlign: 'center' }}>Add review</Text>
+        <Text color="white" style={{ textAlign: 'center', backgroundColor: theme.colors.primary, padding: 8, marginTop: 8, borderRadius: 5 }}>Add review</Text>
       </Pressable>
     </View>
   )
